@@ -20,7 +20,11 @@ dependencies = [
 dev = [
     "pyinstaller>=6.17.0",
     "pyinstaller-hooks-contrib>=2025.11",
+    "pylint>=4.0.4",
 ]
 
 [tool.setuptools]
-packages = ["src"]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
