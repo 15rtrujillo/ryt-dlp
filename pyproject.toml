@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ryt-dlp"
+version = "0.1.0"
+description = "A tkinter-based GUI for yt-dlp"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    {name = "15rtrujillo", email = "ryantrujillo@comcast.net"}
+]
+
+dependencies = [
+    "yt-dlp>=2025.12.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pyinstaller>=6.17.0",
+    "pyinstaller-hooks-contrib>=2025.11",
+]
+
+[tool.setuptools]
+packages = ["src"]
