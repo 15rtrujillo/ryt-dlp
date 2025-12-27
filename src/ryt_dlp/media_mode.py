@@ -1,6 +1,3 @@
-from enum import Enum
-
-
-class MediaMode(Enum):
+class MediaMode:
     VIDEO = 0
     AUDIO = 1
