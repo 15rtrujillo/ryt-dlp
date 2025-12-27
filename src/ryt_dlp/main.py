@@ -57,7 +57,6 @@ class RytDlpGui(tk.Tk):
         self._create_frame_video_audio(self.frame_column1, 1, 0)
 
         self._create_frame_video_options(self.frame_column1, 2, 0)
-        # self.frame_video_options.grid_remove()
 
         self._create_frame_audio_options(self.frame_column1, 2, 0)
         self.frame_audio_options.grid_remove()
@@ -68,10 +67,13 @@ class RytDlpGui(tk.Tk):
         self.frame_column2.grid(row=0, column=1)
 
         self._create_frame_download_options(self.frame_column2, 0, 0)
-
-        self._create_frame_advanced_options(self.frame_column2, 1, 0)
         self.frame_advanced_options.grid_remove()
-        self.frame_browser.grid_remove()
+        self.optionmenu_browser.grid_remove()
+
+        self.button_download = tk.Button(self, text="Download")
+        self.button_download.grid(row=1, column=0, columnspan=2)
+
+        self._create_frame_output(self, 2, 0)
 
         self.mainloop()
     
@@ -89,117 +91,99 @@ class RytDlpGui(tk.Tk):
         self.entry_url.grid(row=0, column=1)
     
     def _create_frame_video_audio(self, parent, row: int, column: int):
-        self.frame_video_audio = tk.Frame(parent)
+        self.frame_video_audio = tk.LabelFrame(parent, text="Media Type")
         self.frame_video_audio.grid(row=row, column=column)
 
-        self.label_media_type = tk.Label(self.frame_video_audio, text="Media Type:")
-        self.label_media_type.grid(row=0, column=0, columnspan=2)
-
         self.radio_video = tk.Radiobutton(self.frame_video_audio, text="Video", variable=self.media_mode, value=MediaMode.VIDEO)
-        self.radio_video.grid(row=1, column=0)
+        self.radio_video.grid(row=0, column=0)
 
         self.radio_audio = tk.Radiobutton(self.frame_video_audio, text="Audio", variable=self.media_mode, value=MediaMode.AUDIO)
-        self.radio_audio.grid(row=1, column=1)
+        self.radio_audio.grid(row=0, column=1)
 
     def _create_frame_video_options(self, parent, row: int, column: int):
-        self.frame_video_options = tk.Frame(parent)
+        self.frame_video_options = tk.LabelFrame(parent, text="Video Options")
         self.frame_video_options.grid(row=row, column=column)
 
-        self.label_video_options = tk.Label(self.frame_video_options, text="Video Options")
-        self.label_video_options.grid(row=0, column=0, columnspan=2)
-
         self.label_quality = tk.Label(self.frame_video_options, text="Quality")
-        self.label_quality.grid(row=1, column=0)
+        self.label_quality.grid(row=0, column=0)
 
         self.optionmenu_quality = tk.OptionMenu(self.frame_video_options, self.video_quality, self.video_quality.get(), *VIDEO_QUALITIES)
-        self.optionmenu_quality.grid(row=1, column=1)
+        self.optionmenu_quality.grid(row=0, column=1)
 
         self.label_video_format = tk.Label(self.frame_video_options, text="Output Format:")
-        self.label_video_format.grid(row=2, column=0)
+        self.label_video_format.grid(row=1, column=0)
 
         self.optionmenu_video_format = tk.OptionMenu(self.frame_video_options, self.video_format, self.video_format.get(), *VIDEO_FORMATS)
-        self.optionmenu_video_format.grid(row=2, column=1)
+        self.optionmenu_video_format.grid(row=1, column=1)
         
-        self._create_frame_sponsorblock(self.frame_video_options, 3, 0)
+        self._create_frame_sponsorblock(self.frame_video_options, 2, 0)
 
     def _create_frame_sponsorblock(self, parent, row: int, column: int):
-        self.frame_sponsorblock = tk.Frame(parent)
+        self.frame_sponsorblock = tk.LabelFrame(parent, text="SponsorBlock - Remove Segments")
         self.frame_sponsorblock.grid(row=row, column=column, columnspan=2)
 
-        self.label_sponserblock = tk.Label(self.frame_sponsorblock, text="SponsorBlock - Remove Segments")
-        self.label_sponserblock.grid(row=0, column=0, columnspan=3)
-
         self.checkbutton_sponsor = tk.Checkbutton(self.frame_sponsorblock, text="Sponsor", variable=self.block_sponsor)
-        self.checkbutton_sponsor.grid(row=1, column=0)
+        self.checkbutton_sponsor.grid(row=0, column=0)
 
         self.checkbutton_selfpromo = tk.Checkbutton(self.frame_sponsorblock, text="Self Promotion", variable=self.block_selfpromo)
-        self.checkbutton_selfpromo.grid(row=2, column=0)
+        self.checkbutton_selfpromo.grid(row=1, column=0)
 
         self.checkbutton_interaction = tk.Checkbutton(self.frame_sponsorblock, text="Interaction Reminder", variable=self.block_interaction)
-        self.checkbutton_interaction.grid(row=3, column=0)
+        self.checkbutton_interaction.grid(row=2, column=0)
 
         self.checkbutton_intro = tk.Checkbutton(self.frame_sponsorblock, text="Intro Animation", variable=self.block_intro)
-        self.checkbutton_intro.grid(row=1, column=1)
+        self.checkbutton_intro.grid(row=0, column=1)
 
         self.checkbutton_outro = tk.Checkbutton(self.frame_sponsorblock, text="Endcards/Credits", variable=self.block_outro)
-        self.checkbutton_outro.grid(row=2, column=1)
+        self.checkbutton_outro.grid(row=1, column=1)
 
         self.checkbutton_preview = tk.Checkbutton(self.frame_sponsorblock, text="Preview/Recap", variable=self.block_preview)
-        self.checkbutton_preview.grid(row=3, column=1)
+        self.checkbutton_preview.grid(row=2, column=1)
 
         self.checkbutton_hook = tk.Checkbutton(self.frame_sponsorblock, text="Hook/Greeting", variable=self.block_hook)
-        self.checkbutton_hook.grid(row=1, column=2)
+        self.checkbutton_hook.grid(row=0, column=2)
 
         self.checkbutton_filler = tk.Checkbutton(self.frame_sponsorblock, text="Tangents/Jokes", variable=self.block_filler)
-        self.checkbutton_filler.grid(row=2, column=2)
+        self.checkbutton_filler.grid(row=1, column=2)
 
         self.checkbutton_music_offtopic = tk.Checkbutton(self.frame_sponsorblock, text="Non-Music Section", variable=self.block_music_offtopic)
-        self.checkbutton_music_offtopic.grid(row=3, column=2)
+        self.checkbutton_music_offtopic.grid(row=2, column=2)
 
     def _create_frame_audio_options(self, parent, row: int, column: int):
-        self.frame_audio_options = tk.Frame(parent)
+        self.frame_audio_options = tk.LabelFrame(parent, text="Audio Options")
         self.frame_audio_options.grid(row=row, column=column)
 
-        self.label_audio_options = tk.Label(self.frame_audio_options, text="Audio Options")
-        self.label_audio_options.grid(row=0, column=0, columnspan=2)
-
         self.label_audio_quality = tk.Label(self.frame_audio_options, text="Quality:")
-        self.label_audio_quality.grid(row=1, column=0)
+        self.label_audio_quality.grid(row=0, column=0)
 
         self.optionmenu_audio_quality = tk.OptionMenu(self.frame_audio_options, self.audio_quality, self.audio_quality.get(), *AUDIO_QUALITIES)
-        self.optionmenu_audio_quality.grid(row=1, column=1)
+        self.optionmenu_audio_quality.grid(row=0, column=1)
 
         self.label_audio_format = tk.Label(self.frame_audio_options, text="Output Format:")
-        self.label_audio_format.grid(row=2, column=0)
+        self.label_audio_format.grid(row=1, column=0)
 
         self.optionmenu_audio_format = tk.OptionMenu(self.frame_audio_options, self.audio_format, self.audio_format.get(), *AUDIO_FORMATS)
-        self.optionmenu_audio_format.grid(row=2, column=1)
+        self.optionmenu_audio_format.grid(row=1, column=1)
 
     def _create_frame_embedding(self, parent, row: int, column: int):
-        self.frame_embedding = tk.Frame(parent)
+        self.frame_embedding = tk.LabelFrame(parent, text="Embedding")
         self.frame_embedding.grid(row=row, column=column)
 
-        self.label_embedding = tk.Label(self.frame_embedding, text="Embedding")
-        self.label_embedding.grid(row=0, column=0, columnspan=3)
-
         self.checkbutton_subtitles = tk.Checkbutton(self.frame_embedding, text="Subtitles", variable=self.embed_subtitles)
-        self.checkbutton_subtitles.grid(row=1, column=0)
+        self.checkbutton_subtitles.grid(row=0, column=0)
 
         self.checkbutton_thumbnail = tk.Checkbutton(self.frame_embedding, text="Thumbnail", variable=self.embed_thumbnail)
-        self.checkbutton_thumbnail.grid(row=1, column=1)
+        self.checkbutton_thumbnail.grid(row=0, column=1)
 
         self.checkbutton_metadata = tk.Checkbutton(self.frame_embedding, text="Metadata", variable=self.embed_metadata)
-        self.checkbutton_metadata.grid(row=1, column=2)
+        self.checkbutton_metadata.grid(row=0, column=2)
 
     def _create_frame_download_options(self, parent, row: int, column: int):
-        self.frame_download_options = tk.Frame(parent)
+        self.frame_download_options = tk.LabelFrame(parent, text="Download Options")
         self.frame_download_options.grid(row=row, column=column)
 
-        self.label_download_options = tk.Label(self.frame_download_options, text="Download Options")
-        self.label_download_options.grid(row=0, column=0)
-
         self.frame_directory = tk.Frame(self.frame_download_options)
-        self.frame_directory.grid(row=1, column=0)
+        self.frame_directory.grid(row=0, column=0)
 
         self.label_directory = tk.Label(self.frame_directory, text="Download Directory:")
         self.label_directory.grid(row=0, column=0)
@@ -211,7 +195,7 @@ class RytDlpGui(tk.Tk):
         self.button_browse_directory.grid(row=0, column=2)
 
         self.frame_file_name_template = tk.Frame(self.frame_download_options)
-        self.frame_file_name_template.grid(row=2, column=0)
+        self.frame_file_name_template.grid(row=1, column=0)
 
         self.label_file_name_template = tk.Label(self.frame_file_name_template, text="File Name Template:")
         self.label_file_name_template.grid(row=0, column=0)
@@ -220,68 +204,77 @@ class RytDlpGui(tk.Tk):
         self.entry_file_name_template.grid(row=0, column=1)
 
         self.checkbutton_advanced_options = tk.Checkbutton(self.frame_download_options, text="Advanced Options", variable=self.advanced_options)
-        self.checkbutton_advanced_options.grid(row=4, column=0)
+        self.checkbutton_advanced_options.grid(row=2, column=0)
+
+        self._create_frame_advanced_options(self.frame_download_options, 3, 0)
 
     def _create_frame_advanced_options(self, parent, row: int, column: int):
-        self.frame_advanced_options = tk.Frame(parent)
+        self.frame_advanced_options = tk.LabelFrame(parent, text="Advanced Options")
         self.frame_advanced_options.grid(row=row, column=column)
 
         self.frame_sleep = tk.Frame(self.frame_advanced_options)
         self.frame_sleep.grid(row=0, column=0)
 
-        self.label_sleep_interval = tk.Label(self.frame_sleep, text="Random Sleep Interval (seconds)\nLeave Max as 0 for a consistent interval")
-        self.label_sleep_interval.grid(row=0, column=0, columnspan=4)
+        self.label_sleep_interval = tk.Label(self.frame_sleep, text="Sleep (Min/Max):")
+        self.label_sleep_interval.grid(row=0, column=0)
 
-        self.label_sleep_min = tk.Label(self.frame_sleep, text="Min:")
-        self.label_sleep_min.grid(row=1, column=0)
+        self.spinbox_sleep_min = tk.Spinbox(self.frame_sleep, from_=0, to=3600, textvariable=self.min_sleep, validate="key", validatecommand=self.validate_command_spinbox, width=5)
+        self.spinbox_sleep_min.grid(row=0, column=1)
 
-        self.spinbox_sleep_min = tk.Spinbox(self.frame_sleep, from_=0, to=3600, textvariable=self.min_sleep, validate="key", validatecommand=self.validate_command_spinbox)
-        self.spinbox_sleep_min.grid(row=1, column=1)
+        self.label_sleep_to = tk.Label(self.frame_sleep, text="to")
+        self.label_sleep_to.grid(row=0, column=2)
 
-        self.label_sleep_max = tk.Label(self.frame_sleep, text="Max:")
-        self.label_sleep_max.grid(row=1, column=2)
-
-        self.spinbox_sleep_max = tk.Spinbox(self.frame_sleep, from_=0, to=3600, textvariable=self.max_sleep, validate="key", validatecommand=self.validate_command_spinbox)
-        self.spinbox_sleep_max.grid(row=1, column=3)
+        self.spinbox_sleep_max = tk.Spinbox(self.frame_sleep, from_=0, to=3600, textvariable=self.max_sleep, validate="key", validatecommand=self.validate_command_spinbox, width=5)
+        self.spinbox_sleep_max.grid(row=0, column=3)
 
         self.frame_rate_limit = tk.Frame(self.frame_advanced_options)
         self.frame_rate_limit.grid(row=1, column=0)
 
-        self.label_rate_limit = tk.Label(self.frame_rate_limit, text="Rate Limit (bytes/second):")
+        self.label_rate_limit = tk.Label(self.frame_rate_limit, text="Rate Limit (bytes/s):")
         self.label_rate_limit.grid(row=0, column=0)
 
-        self.entry_rate_limit = tk.Entry(self.frame_rate_limit, textvariable=self.rate_limit)
+        self.entry_rate_limit = tk.Entry(self.frame_rate_limit, textvariable=self.rate_limit, width=10)
         self.entry_rate_limit.grid(row=0, column=1)
 
-        self.frame_js_runtime = tk.Frame(self.frame_advanced_options)
+        self.frame_js_runtime = tk.LabelFrame(self.frame_advanced_options, text="JavaScript Runtime")
         self.frame_js_runtime.grid(row=2, column=0)
 
-        self.label_js_runtime = tk.Label(self.frame_js_runtime, text="JavaScript Runtime\nPath can be left blank if the runtime is on your system PATH")
-        self.label_js_runtime.grid(row=0, column=0, columnspan=2)
-
-        self.label_which_js_runtime = tk.Label(self.frame_js_runtime, text="Runtime:")
-        self.label_which_js_runtime.grid(row=1, column=0)
+        self.label_js_runtime = tk.Label(self.frame_js_runtime, text="Runtime:")
+        self.label_js_runtime.grid(row=0, column=0)
 
         self.optionmenu_js_runtime = tk.OptionMenu(self.frame_js_runtime, self.js_runtime, self.js_runtime.get(), *JS_RUNTIMES)
-        self.optionmenu_js_runtime.grid(row=1, column=1)
+        self.optionmenu_js_runtime.grid(row=0, column=1)
 
-        self.label_js_runtime_path = tk.Label(self.frame_js_runtime, text="Path")
-        self.label_js_runtime_path.grid(row=2, column=0)
+        self.label_js_runtime_path = tk.Label(self.frame_js_runtime, text="Path:")
+        self.label_js_runtime_path.grid(row=1, column=0)
 
         self.entry_js_runtime_path = tk.Entry(self.frame_js_runtime, textvariable=self.js_runtime_path)
-        self.entry_js_runtime_path.grid(row=2, column=1)
+        self.entry_js_runtime_path.grid(row=1, column=1)
 
-        self.checkbutton_cookies = tk.Checkbutton(self.frame_advanced_options, text="Use Cookies", variable=self.use_cookies)
-        self.checkbutton_cookies.grid(row=3, column=0)
+        self.frame_cookies = tk.Frame(self.frame_advanced_options)
+        self.frame_cookies.grid(row=3, column=0)
 
-        self.frame_browser = tk.Frame(self.frame_advanced_options)
-        self.frame_browser.grid(row=4, column=0)
+        self.checkbutton_cookies = tk.Checkbutton(self.frame_cookies, text="Use cookies for auth", variable=self.use_cookies)
+        self.checkbutton_cookies.grid(row=0, column=0)
 
-        self.label_browser = tk.Label(self.frame_browser, text="Browser:")
-        self.label_browser.grid(row=0, column=0)
-
-        self.optionmenu_browser = tk.OptionMenu(self.frame_browser, self.browser, self.browser.get(), *BROWSERS)
+        self.optionmenu_browser = tk.OptionMenu(self.frame_cookies, self.browser, self.browser.get(), *BROWSERS)
         self.optionmenu_browser.grid(row=0, column=1)
+
+    def _create_frame_output(self, parent, row: int, column: int):
+        self.frame_output = tk.LabelFrame(parent, text="Output Console")
+        self.frame_output.grid(row=row, column=column, columnspan=2, sticky="nsew", padx=5, pady=5)
+
+        self.text_output = tk.Text(self.frame_output, height=10, width=80, state="disabled", wrap="word")
+        self.text_output.grid(row=0, column=0, sticky="nsew")
+
+        # 3. Create the Scrollbar
+        self.scrollbar_output = tk.Scrollbar(self.frame_output, orient="vertical", command=self.text_output.yview)
+        self.scrollbar_output.grid(row=0, column=1, sticky="ns")
+
+        self.text_output.configure(yscrollcommand=self.scrollbar_output.set)
+
+        self.frame_output.grid_columnconfigure(0, weight=1)
+        self.frame_output.grid_rowconfigure(0, weight=1)
 
     def _media_mode_changed(self, *_):
         if self.media_mode.get() == MediaMode.VIDEO:
@@ -301,9 +294,11 @@ class RytDlpGui(tk.Tk):
 
     def _use_cookies_changed(self, *_):
         if self.use_cookies.get():
-            self.frame_browser.grid()
+            self.optionmenu_browser.grid()
+            self.checkbutton_cookies.configure(text="Use cookies from")
         else:
-            self.frame_browser.grid_remove()
+            self.optionmenu_browser.grid_remove()
+            self.checkbutton_cookies.configure(text="Use cookies for auth")
 
 
 if __name__ == "__main__":
