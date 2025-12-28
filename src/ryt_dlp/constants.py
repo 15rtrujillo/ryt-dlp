@@ -11,6 +11,7 @@ AUDIO_QUALITY_LABEL_TO_VALUE = {
 
 VIDEO_FORMAT_DEFAULT = "mp4"
 VIDEO_FORMATS = ["avi", "flv", "mkv", "mov", "webm"]
+VIDEO_FORMAT_ALLOWS_SUBS = ["mp4", "webm", "mkv"]
 VIDEO_QUALITY_DEFAULT = "720p"
 VIDEO_QUALITIES = ["360p", "480p", "1080p", "Best"]
 VIDEO_FPS_DEFAULT = "30"

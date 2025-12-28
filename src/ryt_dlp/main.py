@@ -45,6 +45,7 @@ class RytDlpGui(tk.Tk):
         self.browser = tk.StringVar(self, BROWSER_DEFAULT)
 
         self.media_mode.trace_add("write", self._media_mode_changed)
+        self.video_format.trace_add("write", self._embed_subs_changed)
         self.advanced_options.trace_add("write", self._advanced_options_changed)
         self.use_cookies.trace_add("write", self._use_cookies_changed)
 
@@ -105,17 +106,17 @@ class RytDlpGui(tk.Tk):
         self.frame_video_options = tk.LabelFrame(parent, text="Video Options")
         self.frame_video_options.grid(row=row, column=column)
 
-        self.label_quality = tk.Label(self.frame_video_options, text="Quality")
-        self.label_quality.grid(row=0, column=0)
-
-        self.optionmenu_quality = tk.OptionMenu(self.frame_video_options, self.video_quality, self.video_quality.get(), *VIDEO_QUALITIES)
-        self.optionmenu_quality.grid(row=0, column=1)
-
         self.label_video_format = tk.Label(self.frame_video_options, text="Output Format:")
-        self.label_video_format.grid(row=1, column=0)
+        self.label_video_format.grid(row=0, column=0)
 
         self.optionmenu_video_format = tk.OptionMenu(self.frame_video_options, self.video_format, self.video_format.get(), *VIDEO_FORMATS)
-        self.optionmenu_video_format.grid(row=1, column=1)
+        self.optionmenu_video_format.grid(row=0, column=1)
+
+        self.label_quality = tk.Label(self.frame_video_options, text="Quality")
+        self.label_quality.grid(row=1, column=0)
+
+        self.optionmenu_quality = tk.OptionMenu(self.frame_video_options, self.video_quality, self.video_quality.get(), *VIDEO_QUALITIES)
+        self.optionmenu_quality.grid(row=1, column=1)
 
         self.label_fps = tk.Label(self.frame_video_options, text="FPS:")
         self.label_fps.grid(row=2, column=0)
@@ -160,17 +161,17 @@ class RytDlpGui(tk.Tk):
         self.frame_audio_options = tk.LabelFrame(parent, text="Audio Options")
         self.frame_audio_options.grid(row=row, column=column)
 
-        self.label_audio_quality = tk.Label(self.frame_audio_options, text="Quality:")
-        self.label_audio_quality.grid(row=0, column=0)
-
-        self.optionmenu_audio_quality = tk.OptionMenu(self.frame_audio_options, self.audio_quality, self.audio_quality.get(), *AUDIO_QUALITIES)
-        self.optionmenu_audio_quality.grid(row=0, column=1)
-
         self.label_audio_format = tk.Label(self.frame_audio_options, text="Output Format:")
-        self.label_audio_format.grid(row=1, column=0)
+        self.label_audio_format.grid(row=0, column=0)
 
         self.optionmenu_audio_format = tk.OptionMenu(self.frame_audio_options, self.audio_format, self.audio_format.get(), *AUDIO_FORMATS)
-        self.optionmenu_audio_format.grid(row=1, column=1)
+        self.optionmenu_audio_format.grid(row=0, column=1)
+
+        self.label_audio_quality = tk.Label(self.frame_audio_options, text="Quality:")
+        self.label_audio_quality.grid(row=1, column=0)
+
+        self.optionmenu_audio_quality = tk.OptionMenu(self.frame_audio_options, self.audio_quality, self.audio_quality.get(), *AUDIO_QUALITIES)
+        self.optionmenu_audio_quality.grid(row=1, column=1)
 
     def _create_frame_embedding(self, parent, row: int, column: int):
         self.frame_embedding = tk.LabelFrame(parent, text="Embedding")
@@ -286,7 +287,8 @@ class RytDlpGui(tk.Tk):
     def _media_mode_changed(self, *_):
         if self.media_mode.get() == MediaMode.VIDEO:
             self.frame_video_options.grid()
-            self.checkbutton_subtitles.grid()
+            if self.video_format.get() in VIDEO_FORMAT_ALLOWS_SUBS:
+                self.checkbutton_subtitles.grid()
             self.frame_audio_options.grid_remove()
         elif self.media_mode.get() == MediaMode.AUDIO:
             self.frame_video_options.grid_remove()
@@ -306,6 +308,12 @@ class RytDlpGui(tk.Tk):
         else:
             self.optionmenu_browser.grid_remove()
             self.checkbutton_cookies.configure(text="Use cookies for auth")
+
+    def _embed_subs_changed(self, *_):
+        if self.video_format.get() in VIDEO_FORMAT_ALLOWS_SUBS:
+            self.checkbutton_subtitles.grid()
+        else:
+            self.checkbutton_subtitles.grid_remove()
 
 
 if __name__ == "__main__":
