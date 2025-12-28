@@ -373,6 +373,7 @@ class RytDlpGui(tk.Tk):
                 builder.with_browser_cookies(self.browser.get())
 
         command_list = builder.build(self.url.get())
+        self._text_output_safe_insert(" ".join(command_list))
         download = DownloadManager(command_list, self._update_output, self._download_complete)
         download.start()
 
