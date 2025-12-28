@@ -13,6 +13,8 @@ VIDEO_FORMAT_DEFAULT = "mp4"
 VIDEO_FORMATS = ["avi", "flv", "mkv", "mov", "webm"]
 VIDEO_QUALITY_DEFAULT = "720p"
 VIDEO_QUALITIES = ["360p", "480p", "1080p", "Best"]
+VIDEO_FPS_DEFAULT = "30"
+VIDEO_FPSES = ["60", "Best"]
 
 JS_RUNTIME_DEFAULT = "None"
 JS_RUNTIMES = ["node", "deno", "quickjs", "bun"]

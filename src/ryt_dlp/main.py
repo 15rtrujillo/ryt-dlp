@@ -14,6 +14,7 @@ class RytDlpGui(tk.Tk):
         self.media_mode = tk.IntVar(self, MediaMode.VIDEO)
         self.video_quality = tk.StringVar(self, VIDEO_QUALITY_DEFAULT)
         self.video_format = tk.StringVar(self, VIDEO_FORMAT_DEFAULT)
+        self.video_fps = tk.StringVar(self, VIDEO_FPS_DEFAULT)
         self.audio_quality = tk.StringVar(self, AUDIO_QUALITY_DEFAULT)
         self.audio_format = tk.StringVar(self, AUDIO_FORMAT_DEFAULT)
 
@@ -115,8 +116,14 @@ class RytDlpGui(tk.Tk):
 
         self.optionmenu_video_format = tk.OptionMenu(self.frame_video_options, self.video_format, self.video_format.get(), *VIDEO_FORMATS)
         self.optionmenu_video_format.grid(row=1, column=1)
+
+        self.label_fps = tk.Label(self.frame_video_options, text="FPS:")
+        self.label_fps.grid(row=2, column=0)
+
+        self.optionmenu_fps = tk.OptionMenu(self.frame_video_options, self.video_fps, self.video_fps.get(), *VIDEO_FPSES)
+        self.optionmenu_fps.grid(row=2, column=1)
         
-        self._create_frame_sponsorblock(self.frame_video_options, 2, 0)
+        self._create_frame_sponsorblock(self.frame_video_options, 3, 0)
 
     def _create_frame_sponsorblock(self, parent, row: int, column: int):
         self.frame_sponsorblock = tk.LabelFrame(parent, text="SponsorBlock - Remove Segments")
