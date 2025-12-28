@@ -88,16 +88,19 @@ class CommandBuilder:
         return self._with_option("max-sleep-interval", str(max_sleep))
     
     def with_rate_limit(self, rate_limit: str):
+        if rate_limit == "":
+            return self
         return self._with_option("r", rate_limit)
     
     def with_js_runtime(self, runtime: str, path: str=""):
         if runtime == "None":
-            return
+            return self
         
         option = runtime + (f":{path}" if len(path) > 0 else "")
+        self._with_option("remote-components", "ejs:github")
         return self._with_option("js-runtimes", option)
     
-    def with_browser_cookies(self, browser):
+    def with_browser_cookies(self, browser: str):
         return self._with_option("cookies-from-browser", browser)
     
     def _with_flag(self, flag: str) -> Self:

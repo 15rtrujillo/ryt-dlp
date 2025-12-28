@@ -1,4 +1,6 @@
+from ryt_dlp.command_builder import CommandBuilder
 from ryt_dlp.constants import *
+from ryt_dlp.download_manager import DownloadManager
 from ryt_dlp.media_mode import MediaMode
 
 import tkinter as tk
@@ -33,11 +35,11 @@ class RytDlpGui(tk.Tk):
         self.embed_metadata = tk.BooleanVar(self, True)
 
         self.directory = tk.StringVar(self)
-        self.file_name_template = tk.StringVar(self)
+        self.file_name_template = tk.StringVar(self, "%(title)s.%(ext)s")
 
         self.advanced_options = tk.BooleanVar(self, False)
-        self.min_sleep = tk.IntVar(self, 5)
-        self.max_sleep = tk.IntVar(self, 0)
+        self.min_sleep = tk.StringVar(self, "5")
+        self.max_sleep = tk.StringVar(self, "0")
         self.rate_limit = tk.StringVar(self)
         self.js_runtime = tk.StringVar(self, JS_RUNTIME_DEFAULT)
         self.js_runtime_path = tk.StringVar(self)
@@ -72,7 +74,7 @@ class RytDlpGui(tk.Tk):
         self.frame_advanced_options.grid_remove()
         self.optionmenu_browser.grid_remove()
 
-        self.button_download = tk.Button(self, text="Download")
+        self.button_download = tk.Button(self, text="Download", command=self._button_download_clicked)
         self.button_download.grid(row=1, column=0, columnspan=2)
 
         self._create_frame_output(self, 2, 0)
@@ -199,7 +201,7 @@ class RytDlpGui(tk.Tk):
         self.entry_directory = tk.Entry(self.frame_directory, textvariable=self.directory)
         self.entry_directory.grid(row=0, column=1)
 
-        self.button_browse_directory = tk.Button(self.frame_directory, text="Browse")
+        self.button_browse_directory = tk.Button(self.frame_directory, text="Browse", command=self._button_browse_directory_clicked)
         self.button_browse_directory.grid(row=0, column=2)
 
         self.frame_file_name_template = tk.Frame(self.frame_download_options)
@@ -314,6 +316,78 @@ class RytDlpGui(tk.Tk):
             self.checkbutton_subtitles.grid()
         else:
             self.checkbutton_subtitles.grid_remove()
+
+    def _button_browse_directory_clicked(self):
+        dir = filedialog.askdirectory()
+        self.directory.set(dir)
+
+    def _button_download_clicked(self):
+        self.button_download.configure(state=tk.DISABLED)
+        self.text_output.configure(state=tk.NORMAL)
+        self.text_output.delete(1.0, tk.END)
+        self.text_output.configure(state=tk.DISABLED)
+
+        builder = CommandBuilder()
+        if self.media_mode.get() == MediaMode.VIDEO:
+            sponsorblock = {
+                "sponsor": self.block_sponsor.get(),
+                "selfpromo": self.block_selfpromo.get(),
+                "interaction": self.block_interaction.get(),
+                "intro": self.block_intro.get(),
+                "outro": self.block_outro.get(),
+                "filler": self.block_filler.get(),
+                "hook": self.block_hook.get(),
+                "music_offtopic": self.block_music_offtopic.get()
+            }
+            
+            builder = (builder.with_video_format(self.video_format.get())
+                       .with_video_quality(self.video_quality.get(), self.video_fps.get())
+                       .with_sponsorblock(**sponsorblock))
+            
+            if  self.video_format.get() in VIDEO_FORMAT_ALLOWS_SUBS and self.embed_subtitles.get():
+                builder.embed_subtitles()
+        else:
+            builder = (builder.extract_audio()
+                       .with_audio_format(self.audio_format.get())
+                       .with_audio_quality(AUDIO_QUALITY_LABEL_TO_VALUE[self.audio_quality.get()]))
+        
+        if self.embed_metadata.get():
+            builder.embed_metadata()
+        if self.embed_thumbnail.get():
+            builder.embed_thumbnail()
+
+        builder = (builder.with_output_directory(self.directory.get())
+                   .with_file_name_template(self.file_name_template.get()))
+        
+        if self.advanced_options.get():
+            if self.min_sleep.get().isdigit() and self.min_sleep.get() != "" and int(self.min_sleep.get()) > 0:
+                builder.with_min_sleep(int(self.min_sleep.get()))
+
+            if self.max_sleep.get().isdigit() and self.max_sleep.get() != "" and int(self.max_sleep.get()) > 0:
+                builder.with_max_sleep(int(self.max_sleep.get()))
+
+            builder = (builder.with_rate_limit(self.rate_limit.get())
+                       .with_js_runtime(self.js_runtime.get(), self.js_runtime_path.get()))
+            
+            if self.use_cookies.get():
+                builder.with_browser_cookies(self.browser.get())
+
+        command_list = builder.build(self.url.get())
+        download = DownloadManager(command_list, self._update_output, self._download_complete)
+        download.start()
+
+    def _update_output(self, line: str):
+        self.after(0, self._text_output_safe_insert, line)
+
+    def _download_complete(self):
+        self.button_download.configure(state=tk.ACTIVE)
+        self._text_output_safe_insert("Done!")
+
+    def _text_output_safe_insert(self, line):
+        self.text_output.configure(state=tk.NORMAL)
+        self.text_output.insert(tk.END, line)
+        self.text_output.see(tk.END)
+        self.text_output.configure(state=tk.DISABLED)
 
 
 if __name__ == "__main__":
